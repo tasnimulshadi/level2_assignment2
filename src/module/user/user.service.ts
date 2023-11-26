@@ -1,5 +1,7 @@
+import config from '../../app/config'
 import { IUser } from './user.interface'
 import { UserModel } from './user.model'
+import bcrypt from 'bcrypt'
 
 // Create a new user
 const createUserIntoDB = async (userData: IUser) => {
@@ -28,17 +30,37 @@ const getAllUsersFromDB = async () => {
 // Retrieve a specific user by ID
 const getUserByIdFromDB = async (userId: number) => {
   const userInstance = new UserModel()
-
-  const result = await userInstance.isUserExists(userId)
-  if (result == null) {
+  if ((await userInstance.isUserExists(userId)) == null) {
     throw new Error('User not found')
-  } else {
-    return result
   }
+
+  const result = await UserModel.findOne({ userId: userId })
+  return result
+}
+
+const updateUserIntoDB = async (userId: number, userData: IUser) => {
+  const userInstance = new UserModel()
+  if ((await userInstance.isUserExists(userId)) == null) {
+    throw new Error('User not found')
+  }
+
+  // hashing password before update
+  userData.password = await bcrypt.hash(
+    userData.password,
+    Number(config.bcrypt_salt_rounds),
+  )
+
+  const result = await UserModel.updateOne(
+    { userId: userId },
+    { $set: userData },
+  )
+
+  return result
 }
 
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getUserByIdFromDB,
+  updateUserIntoDB,
 }

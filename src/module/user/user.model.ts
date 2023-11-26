@@ -60,18 +60,7 @@ userSchema.post('save', function (doc, next) {
 })
 
 userSchema.methods.isUserExists = async function (userId: number) {
-  const user = UserModel.aggregate([
-    // stage 1 matching userId
-    {
-      $match: { userId: { $eq: userId } },
-    },
-    // stage show specified data
-    {
-      $project: {
-        password: 0,
-      },
-    },
-  ])
+  const user = UserModel.findOne({ userId: { $eq: userId } })
   return user
 }
 

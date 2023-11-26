@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import joiUserSchema from './user.validation'
 import { UserServices } from './user.service'
+// import { IUser } from './user.interface'
 
 // Create a new user
 const createUser = async (req: Request, res: Response) => {
@@ -96,8 +97,72 @@ const getUserById = async (req: Request, res: Response) => {
   }
 }
 
+// Update user information
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const userData = req.body
+    const { userId } = req.params
+
+    // data validation using Joi
+    const { error, value } = joiUserSchema.validate(userData)
+    if (error) {
+      throw error.details
+    }
+
+    const result = await UserServices.updateUserIntoDB(parseInt(userId), value)
+    let updatedData
+
+    if (result.modifiedCount === 1) {
+      const {
+        userId,
+        username,
+        fullName,
+        age,
+        email,
+        isActive,
+        hobbies,
+        address,
+      } = userData
+
+      updatedData = {
+        userId,
+        username,
+        fullName,
+        age,
+        email,
+        isActive,
+        hobbies,
+        address,
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'User updated successfully!',
+        data: updatedData,
+      })
+    }
+
+    // res.status(200).json({
+    //   success: true,
+    //   message: 'User updated successfully!',
+    //   data: result,
+    // })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
+    })
+  }
+}
+
 export const UserControllers = {
   createUser,
   getAllUsers,
   getUserById,
+  updateUser,
 }

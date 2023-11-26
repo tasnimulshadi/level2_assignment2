@@ -9,6 +9,9 @@ router.post('/users', UserControllers.createUser)
 router.get('/users', UserControllers.getAllUsers)
 // Retrieve a specific user by ID
 router.get('/users/:userId', UserControllers.getUserById)
+// Update user information
+router.put('/users/:userId', UserControllers.updateUser)
+
 
 // router.get('/:studentId', StudentControllers.getOneStudentById)
 
