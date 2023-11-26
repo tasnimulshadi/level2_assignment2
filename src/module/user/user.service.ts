@@ -93,6 +93,23 @@ const createOrderByIdIntoDB = async (userId: number, productData: TOrder) => {
   return result
 }
 
+// Retrieve all orders for a specific user
+const getOrdersByUserIdFromDB = async (userId: number) => {
+  // check if user exists or not
+  const userInstance = new UserModel()
+  if ((await userInstance.isUserExists(userId)) == null) {
+    throw new Error('User not found')
+  }
+
+  const result = await UserModel.findOne({ userId: { $eq: userId } }).select({
+    orders: 1,
+    _id: 0,
+  })
+
+  return result
+}
+
+// export
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
@@ -100,4 +117,5 @@ export const UserServices = {
   updateUserIntoDB,
   deleteUserIntoDB,
   createOrderByIdIntoDB,
+  getOrdersByUserIdFromDB,
 }
