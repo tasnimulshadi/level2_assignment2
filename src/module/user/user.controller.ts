@@ -2,22 +2,20 @@ import { Request, Response } from 'express'
 import joiUserSchema from './user.validation'
 import { UserServices } from './user.service'
 
+// Create a new user
 const createUser = async (req: Request, res: Response) => {
   try {
-    //get data from url request
     const userData = req.body
 
-    //   data validation using Joi
+    // data validation using Joi
     const { error, value } = joiUserSchema.validate(userData)
     if (error) {
       throw error.details
     }
 
-    //send to services for doing query
     const result = await UserServices.createUserIntoDB(value)
+
     // remove password and orders property before sending response
-    // result.orders = undefined
-    // result.password = undefined
     const {
       userId,
       username,
@@ -28,7 +26,7 @@ const createUser = async (req: Request, res: Response) => {
       hobbies,
       address,
     } = result
-    
+
     const newData = {
       userId,
       username,
@@ -40,7 +38,6 @@ const createUser = async (req: Request, res: Response) => {
       address,
     }
 
-    //send back
     res.status(200).json({
       success: true,
       message: 'User created successfully!',
@@ -56,6 +53,26 @@ const createUser = async (req: Request, res: Response) => {
   }
 }
 
+// Retrieve a list of all users
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const result = await UserServices.getAllUsersFromDB()
+
+    res.status(200).json({
+      success: true,
+      message: 'Users fetched successfully!',
+      data: result,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'failed',
+      error: error,
+    })
+  }
+}
+
 export const UserControllers = {
   createUser,
+  getAllUsers
 }
