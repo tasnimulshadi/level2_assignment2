@@ -28,6 +28,7 @@ const joiUserSchema = Joi.object({
   hobbies: Joi.array().items(Joi.string()).required(),
   address: joiAddressSchema.required(),
   orders: Joi.array().items(joiOrderSchema),
+  isDeleted: Joi.boolean().default(false),
 })
 
 export default joiUserSchema

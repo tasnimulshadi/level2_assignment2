@@ -29,6 +29,7 @@ const getAllUsersFromDB = async () => {
 
 // Retrieve a specific user by ID
 const getUserByIdFromDB = async (userId: number) => {
+  // check if user exists or not
   const userInstance = new UserModel()
   if ((await userInstance.isUserExists(userId)) == null) {
     throw new Error('User not found')
@@ -38,7 +39,9 @@ const getUserByIdFromDB = async (userId: number) => {
   return result
 }
 
+// Update user information
 const updateUserIntoDB = async (userId: number, userData: IUser) => {
+  // check if user exists or not
   const userInstance = new UserModel()
   if ((await userInstance.isUserExists(userId)) == null) {
     throw new Error('User not found')
@@ -58,9 +61,26 @@ const updateUserIntoDB = async (userId: number, userData: IUser) => {
   return result
 }
 
+// Delete User (update isDeleted)
+const deleteUserIntoDB = async (userId: number) => {
+  // check if user exists or not
+  const userInstance = new UserModel()
+  if ((await userInstance.isUserExists(userId)) == null) {
+    throw new Error('User not found')
+  }
+
+  const result = await UserModel.updateOne(
+    { userId: userId },
+    { $set: { isDeleted: true } },
+  )
+
+  return result
+}
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getUserByIdFromDB,
   updateUserIntoDB,
+  deleteUserIntoDB,
 }

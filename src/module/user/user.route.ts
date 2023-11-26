@@ -11,8 +11,8 @@ router.get('/users', UserControllers.getAllUsers)
 router.get('/users/:userId', UserControllers.getUserById)
 // Update user information
 router.put('/users/:userId', UserControllers.updateUser)
+// Delete a user
+router.delete('/users/:userId', UserControllers.deleteUser)
 
-
-// router.get('/:studentId', StudentControllers.getOneStudentById)
 
 export const UserRouter = router

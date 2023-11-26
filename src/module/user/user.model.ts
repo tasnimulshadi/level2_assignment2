@@ -39,8 +39,15 @@ const userSchema = new Schema<IUser, TUserModel, TUserMethods>({
   hobbies: { type: [String], required: true },
   address: { type: addressSchema, required: true },
   orders: { type: [ordersSchema] },
+  isDeleted: { type: Boolean, default: false },
 })
 
+userSchema.methods.isUserExists = async function (userId: number) {
+  const user = UserModel.findOne({ userId: { $eq: userId } })
+  return user
+}
+
+// mongoose document middlewares
 userSchema.pre('save', async function (next) {
   // hashing password before save
   // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -59,9 +66,38 @@ userSchema.post('save', function (doc, next) {
   next()
 })
 
-userSchema.methods.isUserExists = async function (userId: number) {
-  const user = UserModel.findOne({ userId: { $eq: userId } })
-  return user
-}
+// mongoose query middlewares
+userSchema.pre('find', function (next) {
+  this.find({
+    isDeleted: {
+      $ne: true,
+    },
+  })
+
+  next()
+})
+
+userSchema.pre('findOne', function (next) {
+  this.findOne({
+    isDeleted: {
+      $ne: true,
+    },
+  })
+
+  next()
+})
+
+userSchema.pre('aggregate', function (next) {
+  // unshift puts this before other stages in aggregate
+  this.pipeline().unshift({
+    $match: {
+      isDeleted: {
+        $ne: true,
+      },
+    },
+  })
+
+  next()
+})
 
 export const UserModel = model<IUser, TUserModel>('User', userSchema)

@@ -28,6 +28,7 @@ export interface IUser {
   hobbies: [string]
   address: TAddress
   orders?: [TOrder]
+  isDeleted: boolean
 }
 
 export type TUserMethods = {
