@@ -1,5 +1,5 @@
 import config from '../../app/config'
-import { IUser } from './user.interface'
+import { IUser, TOrder } from './user.interface'
 import { UserModel } from './user.model'
 import bcrypt from 'bcrypt'
 
@@ -77,10 +77,27 @@ const deleteUserIntoDB = async (userId: number) => {
   return result
 }
 
+// Add New Product in Order (update orders)
+const createOrderByIdIntoDB = async (userId: number, productData: TOrder) => {
+  // check if user exists or not
+  const userInstance = new UserModel()
+  if ((await userInstance.isUserExists(userId)) == null) {
+    throw new Error('User not found')
+  }
+
+  const result = await UserModel.updateOne(
+    { userId: userId },
+    { $addToSet: { orders: productData } },
+  )
+
+  return result
+}
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getUserByIdFromDB,
   updateUserIntoDB,
   deleteUserIntoDB,
+  createOrderByIdIntoDB,
 }

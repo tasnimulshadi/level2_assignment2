@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import joiUserSchema from './user.validation'
+import { joiUserSchema, joiOrderSchema } from './user.validation'
 import { UserServices } from './user.service'
 // import { IUser } from './user.interface'
 
@@ -167,11 +167,52 @@ const deleteUser = async (req: Request, res: Response) => {
 
     const result = await UserServices.deleteUserIntoDB(parseInt(userId))
 
-    res.status(200).json({
-      success: true,
-      message: 'User deleted successfully!',
-      data: result,
+    if (result.modifiedCount === 1) {
+      res.status(200).json({
+        success: true,
+        message: 'User deleted successfully!',
+        data: null,
+      })
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     })
+  }
+}
+
+// Add New Product in Order (update orders)
+const createOrder = async (req: Request, res: Response) => {
+  try {
+    const productData = req.body
+    const { userId } = req.params
+
+    // data validation using Joi
+    const { error, value } = joiOrderSchema.validate(productData)
+    if (error) {
+      throw error.details
+    }
+
+    const result = await UserServices.createOrderByIdIntoDB(
+      parseInt(userId),
+      value,
+    )
+
+    if (result.modifiedCount === 1) {
+      res.status(200).json({
+        success: true,
+        message: 'Order created successfully!',
+        data: null,
+      })
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(404).json({
@@ -191,4 +232,5 @@ export const UserControllers = {
   getUserById,
   updateUser,
   deleteUser,
+  createOrder,
 }

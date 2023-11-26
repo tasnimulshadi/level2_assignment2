@@ -14,5 +14,7 @@ router.put('/users/:userId', UserControllers.updateUser)
 // Delete a user
 router.delete('/users/:userId', UserControllers.deleteUser)
 
+// Add New Product in Order
+router.put('/users/:userId/orders', UserControllers.createOrder)
 
 export const UserRouter = router

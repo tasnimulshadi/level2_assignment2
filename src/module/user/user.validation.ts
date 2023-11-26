@@ -11,13 +11,13 @@ const joiAddressSchema = Joi.object({
   country: Joi.string().required(),
 })
 
-const joiOrderSchema = Joi.object({
+export const joiOrderSchema = Joi.object({
   productName: Joi.string().required(),
   price: Joi.number().required(),
   quantity: Joi.number().required(),
 })
 
-const joiUserSchema = Joi.object({
+export const joiUserSchema = Joi.object({
   userId: Joi.number().required(),
   username: Joi.string().required(),
   password: Joi.string().required(),
@@ -30,5 +30,3 @@ const joiUserSchema = Joi.object({
   orders: Joi.array().items(joiOrderSchema),
   isDeleted: Joi.boolean().default(false),
 })
-
-export default joiUserSchema
