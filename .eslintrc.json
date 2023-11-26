@@ -1,0 +1,27 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "no-unused-vars": "error",
+    "no-unused-expressions": "error",
+    "prefer-const": "error", //suggest to make if 'let' is not reassigned then use 'const'
+    "no-console": "warn", //warn if 'console.log' is used
+    "no-undef": "error" //error if there is undefined
+  },
+  "globals": {
+    "process": "readonly"
+  }
+}
