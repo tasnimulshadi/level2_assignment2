@@ -1,5 +1,12 @@
 import { Schema, model } from 'mongoose'
-import { IUser, TAddress, TFullName, TOrder } from './user.interface'
+import {
+  IUser,
+  TAddress,
+  TFullName,
+  TOrder,
+  TUserMethods,
+  TUserModel,
+} from './user.interface'
 import bcrypt from 'bcrypt'
 import config from '../../app/config'
 
@@ -21,7 +28,7 @@ const ordersSchema = new Schema<TOrder>({
   quantity: { type: Number, required: true },
 })
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<IUser, TUserModel, TUserMethods>({
   userId: { type: Number, unique: true, required: true },
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
@@ -52,4 +59,20 @@ userSchema.post('save', function (doc, next) {
   next()
 })
 
-export const UserModel = model('User', userSchema)
+userSchema.methods.isUserExists = async function (userId: number) {
+  const user = UserModel.aggregate([
+    // stage 1 matching userId
+    {
+      $match: { userId: { $eq: userId } },
+    },
+    // stage show specified data
+    {
+      $project: {
+        password: 0,
+      },
+    },
+  ])
+  return user
+}
+
+export const UserModel = model<IUser, TUserModel>('User', userSchema)

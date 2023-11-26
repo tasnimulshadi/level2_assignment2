@@ -47,7 +47,7 @@ const createUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || 'failed',
+      message: error.message || 'User creation failed!',
       error: error,
     })
   }
@@ -66,13 +66,38 @@ const getAllUsers = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'failed',
+      message: 'Users fetching failed!',
       error: error,
+    })
+  }
+}
+
+// Retrieve a specific user by ID
+const getUserById = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params
+
+    const result = await UserServices.getUserByIdFromDB(parseInt(userId))
+
+    res.status(200).json({
+      success: true,
+      message: 'User fetched successfully!',
+      data: result,
+    })
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     })
   }
 }
 
 export const UserControllers = {
   createUser,
-  getAllUsers
+  getAllUsers,
+  getUserById,
 }

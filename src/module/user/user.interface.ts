@@ -1,3 +1,5 @@
+import { Model } from 'mongoose'
+
 export type TFullName = {
   firstName: string
   lastName: string
@@ -27,3 +29,10 @@ export interface IUser {
   address: TAddress
   orders?: [TOrder]
 }
+
+export type TUserMethods = {
+  // eslint-disable-next-line no-unused-vars
+  isUserExists(userId: number): Promise<IUser | null>
+}
+
+export type TUserModel = Model<IUser, Record<string, never>, TUserMethods>

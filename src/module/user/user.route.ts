@@ -7,6 +7,8 @@ const router = express.Router()
 router.post('/users', UserControllers.createUser)
 // Retrieve a list of all users
 router.get('/users', UserControllers.getAllUsers)
+// Retrieve a specific user by ID
+router.get('/users/:userId', UserControllers.getUserById)
 
 // router.get('/:studentId', StudentControllers.getOneStudentById)
 

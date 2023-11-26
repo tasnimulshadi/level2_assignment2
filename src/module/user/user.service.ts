@@ -25,7 +25,20 @@ const getAllUsersFromDB = async () => {
   return result
 }
 
+// Retrieve a specific user by ID
+const getUserByIdFromDB = async (userId: number) => {
+  const userInstance = new UserModel()
+
+  const result = await userInstance.isUserExists(userId)
+  if (result == null) {
+    throw new Error('User not found')
+  } else {
+    return result
+  }
+}
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
+  getUserByIdFromDB,
 }
