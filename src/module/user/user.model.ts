@@ -1,25 +1,7 @@
 import { Schema, model } from 'mongoose'
-import {
-  IUser,
-  TAddress,
-  TFullName,
-  TOrder,
-  TUserModel,
-} from './user.interface'
+import { IUser, TOrder, TUserModel } from './user.interface'
 import bcrypt from 'bcrypt'
 import config from '../../app/config'
-
-// Define the sub-schemas for TFullName, TAddress, and TOrders
-const fullNameSchema = new Schema<TFullName>({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-})
-
-const addressSchema = new Schema<TAddress>({
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  country: { type: String, required: true },
-})
 
 const ordersSchema = new Schema<TOrder>({
   productName: { type: String, required: true },
@@ -31,12 +13,19 @@ const userSchema = new Schema<IUser, TUserModel>({
   userId: { type: Number, unique: true, required: true },
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
-  fullName: { type: fullNameSchema, required: true },
+  fullName: {
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+  },
   age: { type: Number, required: true },
   email: { type: String, required: true },
   isActive: { type: Boolean, required: true },
   hobbies: { type: [String], required: true },
-  address: { type: addressSchema, required: true },
+  address: {
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    country: { type: String, required: true },
+  },
   orders: { type: [ordersSchema] },
   isDeleted: { type: Boolean, default: false },
 })

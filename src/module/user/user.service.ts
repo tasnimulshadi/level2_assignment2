@@ -12,7 +12,7 @@ const createUserIntoDB = async (userData: IUser) => {
 // Retrieve a list of all users
 const getAllUsersFromDB = async () => {
   const result = await UserModel.aggregate([
-    // stage 1 - username, fullName, age, email, address
+    // stage 1 - output (username, fullName, age, email, address)
     {
       $project: {
         username: 1,
@@ -20,6 +20,7 @@ const getAllUsersFromDB = async () => {
         age: 1,
         email: 1,
         address: 1,
+        _id: 0,
       },
     },
   ])
@@ -35,7 +36,18 @@ const getUserByIdFromDB = async (userId: number) => {
     throw new Error('User not found')
   }
 
-  const result = await UserModel.findOne({ userId: userId })
+  const result = await UserModel.findOne(
+    {
+      userId: userId,
+    },
+    {
+      password: 0,
+      _id: 0,
+      isDeleted: 0,
+      orders: 0,
+      __v: 0,
+    },
+  )
   return result
 }
 
@@ -101,11 +113,15 @@ const getOrdersByUserIdFromDB = async (userId: number) => {
     throw new Error('User not found')
   }
 
-  const result = await UserModel.findOne({ userId: { $eq: userId } }).select({
-    orders: 1,
-    _id: 0,
-  })
-
+  const result = await UserModel.findOne(
+    {
+      userId: { $eq: userId },
+    },
+    {
+      orders: 1,
+      _id: 0,
+    },
+  )
   return result
 }
 
@@ -117,6 +133,7 @@ const getOrdersTotalPriceFromDB = async (userId: number) => {
     throw new Error('User not found')
   }
 
+  // query
   const result = await UserModel.findOne(
     {
       userId: { $eq: userId },
@@ -126,7 +143,7 @@ const getOrdersTotalPriceFromDB = async (userId: number) => {
     },
   )
 
-  //sum orders
+  // sum orders
   let total: number = 0
   if (result && result.orders && result.orders.length > 0) {
     const sum = result.orders.reduce(
