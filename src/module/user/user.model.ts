@@ -4,7 +4,6 @@ import {
   TAddress,
   TFullName,
   TOrder,
-  TUserMethods,
   TUserModel,
 } from './user.interface'
 import bcrypt from 'bcrypt'
@@ -28,7 +27,7 @@ const ordersSchema = new Schema<TOrder>({
   quantity: { type: Number, required: true },
 })
 
-const userSchema = new Schema<IUser, TUserModel, TUserMethods>({
+const userSchema = new Schema<IUser, TUserModel>({
   userId: { type: Number, unique: true, required: true },
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },

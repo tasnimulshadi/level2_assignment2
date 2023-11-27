@@ -109,6 +109,38 @@ const getOrdersByUserIdFromDB = async (userId: number) => {
   return result
 }
 
+// Calculate Total Price of Orders for a Specific User
+const getOrdersTotalPriceFromDB = async (userId: number) => {
+  // check if user exists or not
+  const userInstance = new UserModel()
+  if ((await userInstance.isUserExists(userId)) == null) {
+    throw new Error('User not found')
+  }
+
+  const result = await UserModel.findOne(
+    {
+      userId: { $eq: userId },
+    },
+    {
+      orders: 1,
+    },
+  )
+
+  //sum orders
+  let total: number = 0
+  if (result && result.orders && result.orders.length > 0) {
+    const sum = result.orders.reduce(
+      (accumulator, currentValue) =>
+        accumulator + currentValue.price * currentValue.quantity,
+      0,
+    )
+
+    total = parseFloat(sum.toFixed(2))
+  }
+
+  return { totalPrice: total }
+}
+
 // export
 export const UserServices = {
   createUserIntoDB,
@@ -118,4 +150,5 @@ export const UserServices = {
   deleteUserIntoDB,
   createOrderByIdIntoDB,
   getOrdersByUserIdFromDB,
+  getOrdersTotalPriceFromDB,
 }

@@ -18,5 +18,10 @@ router.delete('/users/:userId', UserControllers.deleteUser)
 router.put('/users/:userId/orders', UserControllers.createOrder)
 // Retrieve all orders for a specific user
 router.get('/users/:userId/orders', UserControllers.getOrdersByUserId)
+// Calculate Total Price of Orders for a Specific User
+router.get(
+  '/users/:userId/orders/total-price',
+  UserControllers.getOrdersTotalPrice,
+)
 
 export const UserRouter = router
